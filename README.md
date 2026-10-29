@@ -14,6 +14,22 @@
 
 ## 安装
 
+### 让 Agent 安装
+
+将下面的提示词复制给 Codex、dsh 或 Claude Code：
+
+```text
+请安装华为云日志查询 Skill：
+https://github.com/bingodfok/huaweicloud-logs
+
+先确认并使用仓库当前默认分支；仓库根目录就是 Skill 包。将完整技能文件安装到当前 Agent 的用户级技能目录，目录名为 huaweicloud-logs。使用安装器时显式指定分支、根目录路径 . 和技能名称。
+若已安装，先核对来源和本地改动，再安全更新，保留本机配置与本地修改。
+本次仅安装 Skill；工作目录和共享依赖在首次实际查询时按 SKILL.md 准备，不提前创建，也不执行日志查询。
+完成后检查 SKILL.md、scripts/lts.py 和 scripts/requirements.txt 是否齐全，并告知安装路径、版本及调用方式。
+```
+
+### 手动安装
+
 将完整仓库放入所用宿主的技能目录，保留 `SKILL.md`、`scripts/` 等文件。
 
 | 宿主 | 默认用户级安装目录 | 调用方式 |
