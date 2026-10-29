@@ -14,13 +14,44 @@
 
 ## 安装
 
+### npx 安装（推荐）
+
+需要 Node.js 22.20+ 和 Git。使用 [Skills CLI](https://github.com/vercel-labs/skills) 从本仓库安装，按提示选择编程助手：
+
+```bash
+npx skills@latest add bingodfok/huaweicloud-logs -g
+```
+
+也可以直接指定宿主：
+
+```bash
+# Codex
+npx skills@latest add bingodfok/huaweicloud-logs -g -a codex
+
+# Claude Code
+npx skills@latest add bingodfok/huaweicloud-logs -g -a claude-code
+```
+
+`-g` 表示用户级安装，省略则安装到当前项目；`--copy` 可改为复制文件。Skills CLI 当前为 Codex 使用 `~/.agents/skills/`，Claude Code 使用 `~/.claude/skills/`，与下方手动安装路径可能不同。已有安装先确认其实际位置与来源，选择一种方式维护。
+
+查看可安装技能或检查用户级安装：
+
+```bash
+npx skills@latest add bingodfok/huaweicloud-logs --list
+npx skills@latest list -g
+```
+
+已通过 Skills CLI 安装的技能，可用 `npx skills@latest update huaweicloud-logs -g` 更新。dsh 尚未列入该 CLI 的支持名单，使用下方手动安装方式。参数与宿主支持情况以 [CLI 文档](https://github.com/vercel-labs/skills/blob/main/docs/commands.md) 和 [宿主列表](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) 为准。
+
 ### 让 Agent 安装
 
-把这段话复制给 Codex、dsh 或 Claude Code：
+把这段话复制给 Codex 或 Claude Code：
 
 ```text
-请阅读 https://github.com/bingodfok/huaweicloud-logs 的安装说明，将华为云日志查询 Skill 安装到当前编程助手，并验证安装结果。
+请按 https://github.com/bingodfok/huaweicloud-logs 的安装说明，使用 npx skills@latest add bingodfok/huaweicloud-logs -g 安装到当前编程助手，并验证安装结果。
 ```
+
+使用 dsh 或未准备 Node.js 时，可让 Agent 按下方手动安装说明完成安装。
 
 ### 手动安装
 

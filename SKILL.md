@@ -21,6 +21,8 @@ description: Use when querying, paging through, exporting, or retrieving request
 
 安装或迁移时保留完整目录（至少包含 `SKILL.md`、`scripts/lts.py`、`scripts/requirements.txt`），不能仅复制 Markdown。也可把宿主目录中的 `huaweicloud-logs` 链接到同一份目录，Windows 可用目录联接（junction），避免多份脚本不同步；已有同名目录先核对，不覆盖。`agents/openai.yaml` 仅供 Codex 展示，其余宿主不依赖它。安装入口不包含凭证或本机查询配置。
 
+通过 `npx skills` 安装时，以安装器返回的位置为准；当前 Skills CLI 的 Codex 用户级目录为 `~/.agents/skills/`，其余目录约定仍按所用宿主解析。根据实际加载位置定位脚本，不要求将已有安装迁移到表中的目录。
+
 dsh 设置了 `DSH_HOME` 时使用该目录下的 `skills/`；项目级也可放在 `.dsh/skills/` 或 `.agents/skills/`。Claude Code 项目级目录为 `.claude/skills/`。以当前宿主实际加载的位置为准，不假定它会自动扫描 Codex 目录。dsh 已注入完整 `<skill_content>` 时直接使用，不重复加载；只有目录摘要时通过宿主技能加载工具读取正文。
 
 执行约定：
