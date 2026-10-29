@@ -98,13 +98,15 @@ git clone https://github.com/bingodfok/huaweicloud-logs.git "$HOME/.codex/skills
 
 凭证通过本机环境变量提供，不放入仓库、查询配置或命令参数。
 
+查询缺少凭证时，Skill 会在对话中引导选择 AK/SK 或 IAM 用户名密码，并一次询问缺少的信息。用户直接回复后，由 agent 写入本机环境变量并继续原查询，无需手动打开终端或编辑配置；已有完整凭证直接复用，回复中不复述密码或密钥。
+
 | 认证方式 | 环境变量 |
 | --- | --- |
 | AK/SK（默认） | `HUAWEICLOUD_SDK_AK`、`HUAWEICLOUD_SDK_SK` |
 | 临时 AK/SK | 上述两项，加 `HUAWEICLOUD_SDK_SECURITY_TOKEN` |
 | IAM 用户名密码 | `HUAWEICLOUD_SDK_USERNAME`、`HUAWEICLOUD_SDK_PASSWORD`、`HUAWEICLOUD_SDK_DOMAIN_NAME` |
 
-`HUAWEICLOUD_SDK_DOMAIN_NAME` 是 IAM 用户所属的华为云账号名。使用密码认证时将配置中的 `auth` 设为 `password`；认证方式不会自动回退。密码换取的 IAM Token 只保存在进程内存中，当前不支持需要 MFA 的 API 登录保护。
+`HUAWEICLOUD_SDK_DOMAIN_NAME` 是 IAM 用户所属的华为云账号名。选择密码认证后，Skill 会在后续命令中传入 `--auth password`；也可将配置中的 `auth` 设为 `password`。认证方式不会自动回退。密码换取的 IAM Token 只保存在进程内存中，当前不支持需要 MFA 的 API 登录保护。
 
 Windows 可使用当前用户级环境变量。脚本优先读取当前进程中的整组凭证；该组变量全部未设置时，才读取 Windows 用户级变量，不混用两个来源。macOS、Linux 和 WSL 使用各自进程的环境变量。
 
