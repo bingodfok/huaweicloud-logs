@@ -16,21 +16,15 @@
 
 ### 让 Agent 安装
 
-将下面的提示词复制给 Codex、dsh 或 Claude Code：
+把这段话复制给 Codex、dsh 或 Claude Code：
 
 ```text
-请安装华为云日志查询 Skill：
-https://github.com/bingodfok/huaweicloud-logs
-
-先确认并使用仓库当前默认分支；仓库根目录就是 Skill 包。将完整技能文件安装到当前 Agent 的用户级技能目录，目录名为 huaweicloud-logs。使用安装器时显式指定分支、根目录路径 . 和技能名称。
-若已安装，先核对来源和本地改动，再安全更新，保留本机配置与本地修改。
-本次仅安装 Skill；工作目录和共享依赖在首次实际查询时按 SKILL.md 准备，不提前创建，也不执行日志查询。
-完成后检查 SKILL.md、scripts/lts.py 和 scripts/requirements.txt 是否齐全，并告知安装路径、版本及调用方式。
+请阅读 https://github.com/bingodfok/huaweicloud-logs 的安装说明，将华为云日志查询 Skill 安装到当前编程助手，并验证安装结果。
 ```
 
 ### 手动安装
 
-将完整仓库放入所用宿主的技能目录，保留 `SKILL.md`、`scripts/` 等文件。
+也可以在终端安装。将完整仓库放入所用宿主的用户级技能目录，目录名为 `huaweicloud-logs`，保留 `SKILL.md`、`scripts/` 等文件。
 
 | 宿主 | 默认用户级安装目录 | 调用方式 |
 | --- | --- | --- |
@@ -52,9 +46,14 @@ git clone https://github.com/bingodfok/huaweicloud-logs.git (Join-Path $HOME '.c
 git clone https://github.com/bingodfok/huaweicloud-logs.git "$HOME/.codex/skills/huaweicloud-logs"
 ```
 
-其他宿主替换目标目录即可；已有同名安装先核对并更新，不直接覆盖。自定义宿主目录时使用实际技能路径，dsh 设置了 `DSH_HOME` 时使用其下的 `skills/`。详细宿主约定见 [SKILL.md](SKILL.md)。
+其他宿主替换目标目录即可。自定义宿主目录时使用实际技能路径，dsh 设置了 `DSH_HOME` 时使用其下的 `skills/`。详细宿主约定见 [SKILL.md](SKILL.md)。
 
-安装仅放置 Skill 文件，不提前创建工作目录或安装运行依赖。
+### 安装约定
+
+- 使用仓库当前默认分支，仓库根目录就是完整 Skill 包。使用 Codex 的 GitHub Skill 安装器时，先确认默认分支并通过 `--ref` 显式指定，同时设置 `--path . --name huaweicloud-logs`。
+- 已有同名安装先核对来源和本地改动，再安全更新，保留本机配置与本地修改。
+- 安装仅放置 Skill 文件；工作目录和共享依赖在实际查询时按 [SKILL.md](SKILL.md) 准备。
+- 安装验证只检查路径、`SKILL.md`、`scripts/lts.py`、`scripts/requirements.txt` 及宿主识别情况，告知安装版本和调用方式。验证时不读取凭证、不创建运行环境、不执行日志查询。
 
 ## 首次使用准备
 
