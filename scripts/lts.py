@@ -20,7 +20,7 @@ CONFIG_KEYS = {*RESOURCE_KEYS, 'labels', 'timezone', 'auth'}
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=['resources', 'query', 'context'])
-    parser.add_argument('--config', type=Path, help='Default: .huaweicloud-logs.json in cwd, then home directory')
+    parser.add_argument('--config', type=Path, help='Default: .huaweicloud-logs.json in project directory, then home directory')
     parser.add_argument('--auth', choices=['aksk', 'password'], help='Override config auth; default aksk')
     for key in RESOURCE_KEYS:
         parser.add_argument('--' + key.replace('_', '-'),
@@ -55,7 +55,10 @@ def parse_timezone(value):
 
 def resolve_options(args, now=None):
     options = vars(args).copy()
-    config_path = args.config or Path.cwd() / '.huaweicloud-logs.json'
+    project_dir = Path.cwd()
+    if project_dir.name == '.huaweicloud-logs':
+        project_dir = project_dir.parent
+    config_path = args.config or project_dir / '.huaweicloud-logs.json'
     if not args.config and not config_path.exists():
         config_path = Path.home() / '.huaweicloud-logs.json'
     config = {}
@@ -241,7 +244,7 @@ def collect(client, options, direction='forwards', anchor=None, anchor_time=None
             # Advance in the chosen sort order; descending walks toward earlier logs.
             search_type='forwards' if cursor is not None else 'init',
             is_desc=direction == 'backwards', limit=min(options['page_size'], cap - len(logs)),
-            highlight=False,
+            highlight=False, is_count=True,
         )
         try:
             data = request_page(client, ListLogsRequest(

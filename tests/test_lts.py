@@ -107,6 +107,42 @@ class LogQueryTests(unittest.TestCase):
                 self.assertFalse(result['complete'])
                 self.assertEqual(result['stop_reason'], reason)
 
+    def test_counted_empty_results_for_query_paging_and_context(self):
+        for mode, payloads, expected_count, complete in [
+            ('query', [{'count': 0}], 0, True),
+            ('query', [{'logs': [log(1)], 'count': 1}, {'count': 0}], 1, True),
+            ('context', [{'count': 0}, {'count': 0}], 0, True),
+            ('query', [{'count': 0, 'isQueryComplete': False}], 0, False),
+        ]:
+            pages, captured = iter(payloads), []
+
+            def send(request, **kwargs):
+                body = json.loads(request.body)
+                captured.append(body)
+                payload = dict(next(pages))
+                # Reproduce LTS omitting count when statistics were not requested.
+                if body.get('is_count') is not True:
+                    payload.pop('count', None)
+                response = requests.Response()
+                response.request = request
+                response.status_code = 200
+                response.headers['Content-Type'] = 'application/json'
+                response._content = json.dumps(payload).encode()
+                return response
+
+            with self.subTest(mode=mode, payloads=payloads), \
+                    patch.dict(os.environ, {'HUAWEICLOUD_SDK_AK': 'test-ak',
+                                           'HUAWEICLOUD_SDK_SK': 'test-sk'}, clear=True), \
+                    patch('requests.sessions.Session.send', side_effect=send):
+                options = self.options('--page-size', '1')
+                if mode == 'context':
+                    options.update(mode='context', line_num='2', before=1, after=1)
+                result = lts.execute(lts.build_client(options), options)
+                self.assertEqual(result['complete'], complete)
+                self.assertEqual(result['count'], expected_count)
+                self.assertEqual(len(captured), len(payloads))
+                self.assertTrue(all(body['is_count'] is True for body in captured))
+
     def test_malformed_empty_response_is_not_no_matches(self):
         for payload in [{}, {'logs': {}}, {'logs': ''}, {'logs': False}]:
             with self.subTest(payload=payload), self.assertRaises(ValueError):
@@ -243,6 +279,26 @@ class LogQueryTests(unittest.TestCase):
                 lts.resolve_options(lts.parse_args(['query']))
             with self.assertRaises(FileNotFoundError):
                 lts.resolve_options(lts.parse_args(['query', '--config', str(Path(tmp) / 'missing.json')]))
+
+    def test_project_config_from_project_runtime_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            work = project / '.huaweicloud-logs'
+            work.mkdir()
+            config = project / '.huaweicloud-logs.json'
+            config.write_text('{"project_id": "project-config"}', encoding='utf-8')
+            (Path.home() / '.huaweicloud-logs.json').write_text(
+                '{"project_id": "user-config"}', encoding='utf-8')
+            explicit = project / 'selected.json'
+            explicit.write_text('{"project_id": "explicit-config"}', encoding='utf-8')
+            with patch.object(Path, 'cwd', return_value=work):
+                options = lts.resolve_options(lts.parse_args(['resources']))
+                self.assertEqual(options['project_id'], 'project-config')
+                options = lts.resolve_options(lts.parse_args(['resources', '--config', str(explicit)]))
+                self.assertEqual(options['project_id'], 'explicit-config')
+                config.unlink()
+                options = lts.resolve_options(lts.parse_args(['resources']))
+                self.assertEqual(options['project_id'], 'user-config')
 
     def test_invalid_window_and_credentials_in_config(self):
         with self.assertRaises(ValueError):

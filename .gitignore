@@ -7,3 +7,4 @@ venv/
 .env.*
 !.env.example
 .huaweicloud-logs.json
+.huaweicloud-logs/
