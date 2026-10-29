@@ -1,4 +1,4 @@
 interface:
   display_name: "华为云日志查询"
   short_description: "查询华为云 LTS 日志，自动选择日志流并直接返回命中结果"
-  default_prompt: "使用 $huaweicloud-logs 查询华为云 LTS 日志，默认在对话中直接返回命中日志，查完无匹配时只回复未查到。"
+  default_prompt: "使用 $huaweicloud-logs 查询华为云 LTS 日志；仅查询时返回日志原文，无匹配时回复未查到；用户明确要求分析时，结合日志和必要源码完成分析。"
